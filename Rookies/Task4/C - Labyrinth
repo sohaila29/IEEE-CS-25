@@ -1,0 +1,125 @@
+#include <bits/stdc++.h>
+#define endl "\n"
+using namespace std;
+#define int long long int
+#define watch(x) cout << (#x) << " is " << (x) << "\n"
+#define watch2(x, y) cout << #x << "=" << x << "," << #y << "=" << y << "\n"
+
+int n, m;
+
+vector<vector<pair<int,int>>> path;
+vector<vector<bool>> used;
+
+int x1, y1, x2, y2;
+
+vector<pair<int,int>> moves = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+
+bool isValid(int x, int y)
+{
+	if(x<0 or x >= n or y <0 or y>=m)
+		return false;
+	if(used[x][y])
+		return false;
+	return true;
+}
+
+void BFS()
+{
+	queue<pair<int,int>> q;
+	q.push({x1,y1});
+	while(!q.empty())
+	{
+		int cx = q.front().first;
+		int cy = q.front().second;
+		q.pop();
+		for(auto i: moves)
+		{
+			int ix = i.first;
+			int iy = i.second;
+			if(isValid(cx+ix, cy+iy))
+			{
+				q.push({cx+ix, cy+iy});
+				used[cx+ix][cy+iy] = true;
+				path[cx+ix][cy+iy] = {ix,iy};
+			}
+		}
+	}
+}
+
+int32_t main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> n >> m;
+	path.resize(n);
+	used.resize(n);
+	for(int i = 0; i < n; ++i)
+	{
+		path[i].resize(m);
+		used[i].resize(m);
+	}
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < m; ++j)
+		{
+			path[i][j] = {-1,-1};
+			char c; cin >> c;
+			if(c == '#')
+			{
+				used[i][j] = true;
+			}
+			if(c == 'A')
+			{
+				x1 = i; y1 = j;
+			}
+			if(c == 'B')
+			{
+				x2 = i; y2 = j;
+			}
+		}
+	}
+	BFS();
+
+	if(!used[x2][y2])
+	{
+		cout << "NO" << endl;
+		return 0;
+	}
+	cout << "YES" << endl;
+
+	vector<pair<int,int>> ans;
+	pair<int,int> end = {x2,y2};
+	
+	while(end.first != x1 or end.second != y1)
+	{
+		ans.push_back(path[end.first][end.second]);
+		end.first -= ans.back().first;
+		end.second -= ans.back().second;	
+	}
+
+	reverse(ans.begin(), ans.end());
+	cout << ans.size() << endl;
+	for(auto c: ans)
+	{
+		if(c.first == 1 and c.second ==0)
+		{
+			cout << 'D';
+		}
+		else if(c.first == -1 and c.second ==0)
+		{
+			cout << 'U';
+		}
+		else if(c.first == 0 and c.second == 1)
+		{
+			cout << 'R';
+		}
+		else if(c.first == 0 and c.second == -1)
+		{
+			cout << 'L';
+		}
+	}
+}
+		
+				
+		
+		
